@@ -40,66 +40,67 @@ add_root_dictionary(O2QualityControlTypes
 add_library(O2QualityControl
   src/Activity.cxx
   src/ActivityHelpers.cxx
-  src/ObjectsManager.cxx
-  src/CheckRunner.cxx
-  src/AggregatorRunner.cxx
-  src/CheckRunnerFactory.cxx
-  src/AggregatorRunnerFactory.cxx
-  src/CheckInterface.cxx
+  src/AdvancedWorkflow.cxx
+  src/Aggregator.cxx
   src/AggregatorInterface.cxx
-  src/DatabaseFactory.cxx
+  src/AggregatorRunner.cxx
+  src/AggregatorRunnerFactory.cxx
+  src/Bookkeeping.cxx
+  src/Calculators.cxx
   src/CcdbDatabase.cxx
-  src/QcInfoLogger.cxx
-  src/TaskFactory.cxx
-  src/TaskRunner.cxx
-  src/TaskRunnerFactory.cxx
-  src/TaskInterface.cxx
-  src/UserCodeInterface.cxx
-  src/RepositoryBenchmark.cxx
-  src/RepoPathUtils.cxx
-  src/stringUtils.cxx
+  src/Check.cxx
+  src/CheckInterface.cxx
+  src/CheckRunner.cxx
+  src/CheckRunnerFactory.cxx
+  src/ConfigParamGlo.cxx
+  src/CustomParameters.cxx
+  src/DataProducer.cxx
+  src/DataProducerExample.cxx
+  src/DataSourceSpec.cxx
+  src/DatabaseFactory.cxx
+  src/DummyDatabase.cxx
+  src/HashDataDescription.cxx
+  src/HistoProducer.cxx
   src/InfrastructureGenerator.cxx
   src/InfrastructureSpecReader.cxx
-  src/Check.cxx
-  src/Aggregator.cxx
-  src/HashDataDescription.cxx
-  src/ServiceDiscovery.cxx
-  src/Triggers.cxx
-  src/TriggerHelpers.cxx
-  src/PostProcessingRunner.cxx
-  src/PostProcessingFactory.cxx
-  src/PostProcessingConfig.cxx
-  src/PostProcessingInterface.cxx
-  src/PostProcessingDevice.cxx
-  src/TrendingTask.cxx
-  src/TrendingTaskConfig.cxx
-  src/DummyDatabase.cxx
-  src/DataProducer.cxx
-  src/HistoProducer.cxx
-  src/DataProducerExample.cxx
   src/MonitorObjectCollection.cxx
-  src/UpdatePolicyManager.cxx
-  src/AdvancedWorkflow.cxx
+  src/ObjectsManager.cxx
+  src/PostProcessingConfig.cxx
+  src/PostProcessingDevice.cxx
+  src/PostProcessingFactory.cxx
+  src/PostProcessingInterface.cxx
+  src/PostProcessingRunner.cxx
+  src/QcInfoLogger.cxx
   src/QualitiesToTRFCollectionConverter.cxx
-  src/Calculators.cxx
-  src/DataSourceSpec.cxx
+  src/ReductorHelpers.cxx
+  src/RepoPathUtils.cxx
+  src/RepositoryBenchmark.cxx
+  src/RootClassFactory.cxx
   src/RootFileSink.cxx
   src/RootFileSource.cxx
-  src/UpdatePolicyType.cxx
-  src/RootClassFactory.cxx
-  src/ConfigParamGlo.cxx
+  src/RootFileStorage.cxx
+  src/ServiceDiscovery.cxx
   src/SliceTrendingTask.cxx
   src/SliceTrendingTaskConfig.cxx
-  src/Bookkeeping.cxx
-  src/CustomParameters.cxx
-  src/runnerUtils.cxx
+  src/TaskFactory.cxx
+  src/TaskInterface.cxx
+  src/TaskRunner.cxx
+  src/TaskRunnerFactory.cxx
   src/Timekeeper.cxx
-  src/TimekeeperSynchronous.cxx
   src/TimekeeperAsynchronous.cxx
-  src/WorkflowType.cxx
   src/TimekeeperFactory.cxx
-  src/RootFileStorage.cxx
-  src/ReductorHelpers.cxx)
+  src/TimekeeperSynchronous.cxx
+  src/TrendingTask.cxx
+  src/TrendingTaskConfig.cxx
+  src/TriggerHelpers.cxx
+  src/Triggers.cxx
+  src/UpdatePolicyManager.cxx
+  src/UpdatePolicyType.cxx
+  src/UserCodeInterface.cxx
+  src/WorkflowType.cxx
+  src/WorkflowValidator.cxx
+  src/runnerUtils.cxx
+  src/stringUtils.cxx)
 
 target_include_directories(
   O2QualityControl

@@ -29,6 +29,7 @@
 #include "QualityControl/InfrastructureSpec.h"
 #include "QualityControl/RootFileSink.h"
 #include "QualityControl/RootFileSource.h"
+#include "QualityControl/WorkflowValidator.h"
 
 #include <Framework/DataSpecUtils.h>
 #include <Framework/ExternalFairMQDeviceProxy.h>
@@ -102,6 +103,8 @@ framework::WorkflowSpec InfrastructureGenerator::generateStandaloneInfrastructur
   generateAggregator(workflow, infrastructureSpec);
   generatePostProcessing(workflow, infrastructureSpec);
 
+  WorkflowValidator::sameOutputSpecs(workflow);
+
   return workflow;
 }
 
@@ -109,6 +112,8 @@ void InfrastructureGenerator::generateStandaloneInfrastructure(framework::Workfl
 {
   auto qcInfrastructure = InfrastructureGenerator::generateStandaloneInfrastructure(configurationTree);
   workflow.insert(std::end(workflow), std::begin(qcInfrastructure), std::end(qcInfrastructure));
+
+  WorkflowValidator::sameOutputSpecs(workflow);
 }
 
 framework::WorkflowSpec InfrastructureGenerator::generateFullChainInfrastructure(const ptree& configurationTree)
@@ -155,6 +160,8 @@ framework::WorkflowSpec InfrastructureGenerator::generateFullChainInfrastructure
   generateAggregator(workflow, infrastructureSpec);
   generatePostProcessing(workflow, infrastructureSpec);
 
+  WorkflowValidator::sameOutputSpecs(workflow);
+
   return workflow;
 }
 
@@ -162,6 +169,8 @@ void InfrastructureGenerator::generateFullChainInfrastructure(WorkflowSpec& work
 {
   auto qcInfrastructure = InfrastructureGenerator::generateFullChainInfrastructure(configurationTree);
   workflow.insert(std::end(workflow), std::begin(qcInfrastructure), std::end(qcInfrastructure));
+
+  WorkflowValidator::sameOutputSpecs(workflow);
 }
 
 WorkflowSpec InfrastructureGenerator::generateLocalInfrastructure(const boost::property_tree::ptree& configurationTree, const std::string& targetHost)
@@ -237,6 +246,8 @@ WorkflowSpec InfrastructureGenerator::generateLocalInfrastructure(const boost::p
     }
   }
 
+  WorkflowValidator::sameOutputSpecs(workflow);
+
   return workflow;
 }
 
@@ -244,6 +255,8 @@ void InfrastructureGenerator::generateLocalInfrastructure(framework::WorkflowSpe
 {
   auto qcInfrastructure = InfrastructureGenerator::generateLocalInfrastructure(configurationTree, host);
   workflow.insert(std::end(workflow), std::begin(qcInfrastructure), std::end(qcInfrastructure));
+
+  WorkflowValidator::sameOutputSpecs(workflow);
 }
 
 o2::framework::WorkflowSpec InfrastructureGenerator::generateRemoteInfrastructure(const boost::property_tree::ptree& configurationTree)
@@ -329,6 +342,8 @@ o2::framework::WorkflowSpec InfrastructureGenerator::generateRemoteInfrastructur
   generateAggregator(workflow, infrastructureSpec);
   generatePostProcessing(workflow, infrastructureSpec);
 
+  WorkflowValidator::sameOutputSpecs(workflow);
+
   return workflow;
 }
 
@@ -336,6 +351,8 @@ void InfrastructureGenerator::generateRemoteInfrastructure(framework::WorkflowSp
 {
   auto qcInfrastructure = InfrastructureGenerator::generateRemoteInfrastructure(configurationTree);
   workflow.insert(std::end(workflow), std::begin(qcInfrastructure), std::end(qcInfrastructure));
+
+  WorkflowValidator::sameOutputSpecs(workflow);
 }
 
 framework::WorkflowSpec InfrastructureGenerator::generateLocalBatchInfrastructure(const boost::property_tree::ptree& configurationTree, const std::string& sinkFilePath)
@@ -369,6 +386,8 @@ framework::WorkflowSpec InfrastructureGenerator::generateLocalBatchInfrastructur
                          { RootFileSink::getLabel() } });
   }
 
+  WorkflowValidator::sameOutputSpecs(workflow);
+
   return workflow;
 }
 
@@ -376,6 +395,8 @@ void InfrastructureGenerator::generateLocalBatchInfrastructure(framework::Workfl
 {
   auto qcInfrastructure = InfrastructureGenerator::generateLocalBatchInfrastructure(configurationTree, sinkFilePath);
   workflow.insert(std::end(workflow), std::begin(qcInfrastructure), std::end(qcInfrastructure));
+
+  WorkflowValidator::sameOutputSpecs(workflow);
 }
 
 framework::WorkflowSpec InfrastructureGenerator::generateRemoteBatchInfrastructure(const boost::property_tree::ptree& configurationTree, const std::string& sourceFilePath)
@@ -416,6 +437,8 @@ void InfrastructureGenerator::generateRemoteBatchInfrastructure(framework::Workf
 {
   auto qcInfrastructure = InfrastructureGenerator::generateRemoteBatchInfrastructure(configurationTree, sourceFilePath);
   workflow.insert(std::end(workflow), std::begin(qcInfrastructure), std::end(qcInfrastructure));
+
+  WorkflowValidator::sameOutputSpecs(workflow);
 }
 
 void InfrastructureGenerator::customizeInfrastructure(std::vector<framework::CompletionPolicy>& policies)

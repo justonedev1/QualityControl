@@ -13,6 +13,7 @@
 
 #include <memory>
 #include <algorithm>
+#include <string>
 #include <utility>
 #include <ranges>
 // O2
@@ -24,6 +25,7 @@
 #include "QualityControl/CommonSpec.h"
 #include "QualityControl/InputUtils.h"
 #include "QualityControl/MonitorObject.h"
+#include "QualityControl/ObjectMetadataKeys.h"
 #include "QualityControl/RootClassFactory.h"
 #include "QualityControl/QcInfoLogger.h"
 #include "QualityControl/Quality.h"
@@ -163,7 +165,14 @@ QualityObjectsType Check::check(std::map<std::string, std::shared_ptr<MonitorObj
       }));
     ILOG(Debug, Devel) << "Check '" << mCheckConfig.name << "', quality '" << quality << "'" << ENDM;
     std::vector<std::string> monitorObjectsNames;
-    std::ranges::copy(moMapToCheck | std::views::keys, std::back_inserter(monitorObjectsNames));
+    // std::ranges::copy(moMapToCheck | std::views::keys, std::back_inserter(monitorObjectsNames));
+    unsigned long maxCycle{};
+    for (const auto& [moName, mo] : moMapToCheck) {
+      monitorObjectsNames.emplace_back(moName);
+      if (const auto cycle = mo->getMetadata(repository::metadata_keys::cycle)) {
+        maxCycle = std::max(std::stoul(cycle.value()), maxCycle);
+      }
+    }
     // todo: take metadata from somewhere
     qualityObjects.emplace_back(std::make_shared<QualityObject>(
       quality,
@@ -172,7 +181,11 @@ QualityObjectsType Check::check(std::map<std::string, std::shared_ptr<MonitorObj
       UpdatePolicyTypeUtils::ToString(mCheckConfig.policyType),
       stringifyInput(mCheckConfig.inputSpecs),
       monitorObjectsNames));
+
     qualityObjects.back()->setActivity(commonActivity);
+    if (maxCycle > 0) {
+      qualityObjects.back()->addMetadata(repository::metadata_keys::cycle, std::to_string(maxCycle));
+    }
     beautify(moMapToCheck, quality);
   }
 

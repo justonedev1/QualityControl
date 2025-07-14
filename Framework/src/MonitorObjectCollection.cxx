@@ -16,15 +16,27 @@
 
 #include "QualityControl/MonitorObjectCollection.h"
 #include "QualityControl/MonitorObject.h"
+#include "QualityControl/ObjectMetadataKeys.h"
 #include "QualityControl/QcInfoLogger.h"
 
 #include <Mergers/MergerAlgorithm.h>
 #include <TNamed.h>
+#include <string>
 
 using namespace o2::mergers;
 
 namespace o2::quality_control::core
 {
+
+void mergeCycles(MonitorObject*& otherMO, MonitorObject*& targetMO)
+{
+  const auto otherCycle = otherMO->getMetadata(repository::metadata_keys::cycle);
+  const auto targetCycle = targetMO->getMetadata(repository::metadata_keys::cycle);
+  if (otherCycle.has_value() && targetCycle.has_value()) {
+    // TODO: would it be worth it for metadata to store other types than std::string?
+    targetMO->addOrUpdateMetadata(repository::metadata_keys::cycle, std::to_string(std::max(std::stoul(otherCycle.value()), std::stoul(targetCycle.value()))));
+  }
+}
 
 void MonitorObjectCollection::merge(mergers::MergeInterface* const other)
 {
@@ -59,6 +71,8 @@ void MonitorObjectCollection::merge(mergers::MergeInterface* const other)
         otherMO->Copy(*targetMO);
         continue;
       }
+
+      mergeCycles(otherMO, targetMO);
 
       if (!reportedMismatchingRunNumbers && otherMO->getActivity().mId < targetMO->getActivity().mId) {
         ILOG(Error, Ops) << "The run number of the input object '" << otherMO->GetName() << "' ("
@@ -135,6 +149,15 @@ void MonitorObjectCollection::setTaskName(const std::string& taskName)
 const std::string& MonitorObjectCollection::getTaskName() const
 {
   return mTaskName;
+}
+
+void MonitorObjectCollection::addOrUpdateMetadata(std::string key, std::string value)
+{
+  for (auto obj : *this) {
+    if (auto mo = dynamic_cast<MonitorObject*>(obj)) {
+      mo->addOrUpdateMetadata(key, value);
+    }
+  }
 }
 
 std::string formatDuration(uint64_t durationMs)

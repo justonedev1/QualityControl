@@ -13,6 +13,7 @@
 
 #include <memory>
 #include <algorithm>
+#include <stdexcept>
 #include <string>
 #include <utility>
 #include <ranges>
@@ -165,12 +166,18 @@ QualityObjectsType Check::check(std::map<std::string, std::shared_ptr<MonitorObj
       }));
     ILOG(Debug, Devel) << "Check '" << mCheckConfig.name << "', quality '" << quality << "'" << ENDM;
     std::vector<std::string> monitorObjectsNames;
-    // std::ranges::copy(moMapToCheck | std::views::keys, std::back_inserter(monitorObjectsNames));
     unsigned long maxCycle{};
     for (const auto& [moName, mo] : moMapToCheck) {
       monitorObjectsNames.emplace_back(moName);
       if (const auto cycle = mo->getMetadata(repository::metadata_keys::cycle)) {
-        maxCycle = std::max(std::stoul(cycle.value()), maxCycle);
+        const auto& cycleStr = cycle.value();
+        unsigned long cycleVal{};
+        if (const auto fromCharsRed = std::from_chars(cycleStr.c_str(), cycleStr.c_str() + cycleStr.size(), cycleVal); fromCharsRed.ec == std::errc()) {
+          maxCycle = std::max(cycleVal, maxCycle);
+        } else {
+          ILOG(Warning, Support) << "metadata " << repository::metadata_keys::cycle << " with value " << cycleStr << " couldn't be parsed for a reason: "
+                                 << std::make_error_code(fromCharsRed.ec).message() << ENDM;
+        }
       }
     }
     // todo: take metadata from somewhere

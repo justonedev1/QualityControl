@@ -283,8 +283,9 @@ TObject* CcdbDatabase::retrieveTObject(std::string path, std::map<std::string, s
   auto* object = ccdbApi->retrieveFromTFileAny<TObject>(path, metadata, timestamp, headers);
   if (object == nullptr) {
     ILOG(Warning, Support) << "We could NOT retrieve the object " << path << " with timestamp " << timestamp << "." << ENDM;
+    ILOG(Debug, Support) << "and with metadata:" << ENDM;
     for (auto [metaKey, metaVal] : metadata) {
-      ILOG(Debug, Support) << "and with metadata: [" << metaKey << ", " << metaVal << "]" << ENDM;
+      ILOG(Debug, Support) << metaKey << ", " << metaVal << ENDM;
     }
     return nullptr;
   }

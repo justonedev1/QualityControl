@@ -18,36 +18,25 @@
 #include "QualityControl/MonitorObject.h"
 #include "QualityControl/ObjectMetadataKeys.h"
 #include "QualityControl/QcInfoLogger.h"
+#include "QualityControl/ObjectMetadataKeysHelpers.h"
 
 #include <Mergers/MergerAlgorithm.h>
 #include <TNamed.h>
 #include <optional>
 #include <string>
-#include <charconv>
 
 using namespace o2::mergers;
 
 namespace o2::quality_control::core
 {
 
-std::optional<unsigned long> parseCycle(const std::string& cycleStr)
-{
-  unsigned long cycleVal{};
-  if (auto parse_res = std::from_chars(cycleStr.c_str(), cycleStr.c_str() + cycleStr.size(), cycleVal); parse_res.ec != std::errc{}) {
-    ILOG(Warning, Support) << "failed to decypher " << repository::metadata_keys::cycle << " metadata with value " << cycleStr
-                           << ", with std::errc " << std::make_error_code(parse_res.ec).message() << ENDM;
-    return std::nullopt;
-  }
-  return cycleVal;
-}
-
 void mergeCycles(MonitorObject* targetMO, MonitorObject* otherMO)
 {
   const auto otherCycle = otherMO->getMetadata(repository::metadata_keys::cycle);
   const auto targetCycle = targetMO->getMetadata(repository::metadata_keys::cycle);
   if (otherCycle.has_value() && targetCycle.has_value()) {
-    const auto targetCycleParsed = parseCycle(targetCycle.value());
-    const auto otherCycleParsed = parseCycle(otherCycle.value());
+    const auto targetCycleParsed = repository::metadata_keys::parseCycle(targetCycle.value());
+    const auto otherCycleParsed = repository::metadata_keys::parseCycle(otherCycle.value());
 
     if (targetCycleParsed && otherCycleParsed) {
       targetMO->addOrUpdateMetadata(repository::metadata_keys::cycle, std::to_string(std::max(targetCycleParsed.value(), otherCycleParsed.value())));
@@ -179,7 +168,7 @@ const std::string& MonitorObjectCollection::getTaskName() const
   return mTaskName;
 }
 
-void MonitorObjectCollection::addOrUpdateMetadata(std::string key, std::string value)
+void MonitorObjectCollection::addOrUpdateMetadata(const std::string& key, const std::string& value)
 {
   for (auto obj : *this) {
     if (auto mo = dynamic_cast<MonitorObject*>(obj)) {
